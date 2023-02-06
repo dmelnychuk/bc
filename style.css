@@ -1,0 +1,22 @@
+body {
+    background:#ecf9fa;
+  }
+  
+  #infographic {
+    width: 100%;
+    background: grey;
+  }
+
+ .stats-bar{
+    display: flex;
+    height: .8em;
+    margin: 1em auto;
+    background: hsl(100,20%,90%);
+    max-width: 600px;
+  }
+
+ .stats-bar::before {
+    content: "";
+    width: calc(var(--value) * 100%);
+    background-color: green;
+  }

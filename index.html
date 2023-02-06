@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Range Calculator</title>
+</head>
+<body>
+
+    <div class="storage">
+        <input type="range" id="sliderstorage" min="0" max="200" value="100" >
+        <div class="value-storage" id="value-storage">100</div>
+
+    </div>
+
+
+    <div class="transfere"> 
+        <input type="range" id="slidertransfere" min="0" max="200" value="100" >
+        <div class="value-transfere" id="value-transfere">100</div>
+    </div>
+
+
+
+    <div class="infographic"> 
+        <div class="stats-bar" id="backblaze-bar" style="--value: .1"></div>
+        <div class="stats-bar" id="bunny-bar" style="--value: .4"></div>
+        <div class="stats-bar" id="scaleway-bar" style="--value: .6"></div>
+        <div class="stats-bar" id="vultr-bar" style="--value: .3"></div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
