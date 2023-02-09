@@ -34,7 +34,9 @@ const prices = [
 // create variables that picks up ids of sliders from html body
 const sliderStorage = document.getElementById("sliderstorage");
 const sliderTransfere = document.getElementById("slidertransfere");
-let sliderTransferePosition, sliderStoragePosition;
+//set base slider positions
+let sliderTransferePosition = 100; 
+let sliderStoragePosition = 100;
 
 //draw a list of vendors with radio buttons
 prices.forEach((price) => {
@@ -43,16 +45,42 @@ prices.forEach((price) => {
         //if object property has options create radiobutton for these options using option key as radiobutton label
         let options = Object.keys(price.options);
         let radioButtons = options.map((option) => {
-            return `<input type="radio" name="${price.name}" value="${option}">${option}</input>`
+            return `<input type="radio" name="${price.name}" value="${option}" checked >${option}</input>`
         })
 
         //draw a list of vendors with radio buttons
-        document.getElementById("infographic").innerHTML += `<li>${price.name} ${radioButtons.join(" ")}</li>`
+        document.getElementById("infographic").innerHTML += `<li id="radio-${price.name}">${price.name} ${radioButtons.join(" ")}</li>`
     } else {
         //draw a list of vendors without radio buttons
         document.getElementById("infographic").innerHTML += `<li>${price.name}</li>`
     }
 })
+
+//add event listener to check if any radio button is checked
+document.getElementById("infographic").addEventListener("click", showSelected);
+
+//create function that shows which radio button is checked
+function showSelected(e) {
+    console.log(e);
+    if (this.checked) {
+        document.getElementById("infographic").innerText = `You selected ${this.value}`;
+
+    }
+}
+
+
+
+const radioButtons = document.querySelectorAll('input[name="size"]');
+        for(const radioButton of radioButtons){
+            radioButton.addEventListener('click', showSelected);
+        }        
+        
+        function showSelected(e) {
+            console.log(e);
+            if (this.checked) {
+                document.querySelector('#output').innerText = `You selected ${this.value}`;
+            }
+        }
 
 
 
@@ -95,11 +123,15 @@ const total = prices.map((price) => {
     else if (price.maxpay && totalPrice > price.maxpay) {
         console.log("second if");
         return {name: price.name, total: price.maxpay} }
+
+    //if object has option property check if this radio is checked 
+
     //if freegb property is less than sliderStoragePosition and sliderTransferePosition, return 0. 
-    //if freegb property is more than sliderStoragePosition or sliderTransferePosition, return totalPrice
+ 
     else if (price.freegb && price.freegb < sliderStoragePosition && price.freegb < sliderTransferePosition) {
         console.log("third if");
         return {name: price.name, total: 0} }
+    //if freegb property is more than sliderStoragePosition or sliderTransferePosition, return totalPrice
     else if (price.freegb && price.freegb > sliderStoragePosition || price.freegb > sliderTransferePosition) {
         console.log("forth if");
         return {name: price.name, total: totalPrice} }
