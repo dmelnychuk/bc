@@ -38,49 +38,50 @@ const sliderTransfere = document.getElementById("slidertransfere");
 let sliderTransferePosition = 100; 
 let sliderStoragePosition = 100;
 
-//draw a list of vendors with radio buttons
+//draw a list of vendors with and without radio buttons
 prices.forEach((price) => {
     if (price.options) { 
 
         //if object property has options create radiobutton for these options using option key as radiobutton label
         let options = Object.keys(price.options);
         let radioButtons = options.map((option) => {
-            return `<input type="radio" name="${price.name}" value="${option}" checked >${option}</input>`
+            return `<input type="radio" name="${price.name}" value="${option}" >${option}</input>`
         })
 
         //draw a list of vendors with radio buttons
-        document.getElementById("infographic").innerHTML += `<li id="radio-${price.name}">${price.name} ${radioButtons.join(" ")}</li>`
+        document.getElementById("infographic").innerHTML += `<li class="radio" id="radio-${price.name}">${price.name} ${radioButtons.join(" ")}</li>`
     } else {
         //draw a list of vendors without radio buttons
         document.getElementById("infographic").innerHTML += `<li>${price.name}</li>`
     }
 })
 
-//add event listener to check if any radio button is checked
-document.getElementById("infographic").addEventListener("click", showSelected);
 
-//create function that shows which radio button is checked
-function showSelected(e) {
-    console.log(e);
-    if (this.checked) {
-        document.getElementById("infographic").innerText = `You selected ${this.value}`;
+//create function that checks if radio button is checked and returns value of the radio button
+const checkRadio = () => {
+    console.log(`checkRadio function starts...`)
 
+//create variable that picks value from input type radio
+
+    for (const li of document.querySelectorAll('input[type="radio"]')) {
+        console.log(`Li content : ${li.textContent}`);
     }
+    let radios
+
+    // for (let i = 0; i < radios.length; i++) {
+    //     if (radios[i].checked) {
+    //         console.log(`radio works:  ${radios[i].value}`)
+    //         return radios[i].value;
+    //     }
+    // }
 }
 
+//add event listener to check if any radio button is checked
+document.getElementById("infographic").addEventListener("click", checkRadio);
 
 
-const radioButtons = document.querySelectorAll('input[name="size"]');
-        for(const radioButton of radioButtons){
-            radioButton.addEventListener('click', showSelected);
-        }        
-        
-        function showSelected(e) {
-            console.log(e);
-            if (this.checked) {
-                document.querySelector('#output').innerText = `You selected ${this.value}`;
-            }
-        }
+
+
 
 
 
@@ -124,7 +125,8 @@ const total = prices.map((price) => {
         console.log("second if");
         return {name: price.name, total: price.maxpay} }
 
-    //if object has option property check if this radio is checked 
+ 
+
 
     //if freegb property is less than sliderStoragePosition and sliderTransferePosition, return 0. 
  
@@ -143,4 +145,4 @@ const total = prices.map((price) => {
 })
 }
 
-/////need to fix an issue with Nan in function above
+/////need to fix an issue with NaN in function above
