@@ -45,7 +45,7 @@ prices.forEach((price) => {
         //if object property has options create radiobutton for these options using option key as radiobutton label
         let options = Object.keys(price.options);
         let radioButtons = options.map((option) => {
-            return `<input type="radio" name="${price.name}" value="${option}" >${option}</input>`
+            return `<input type="radio" name="${price.name}" option="${option}" >${option}</input>`
         })
 
         //draw a list of vendors with radio buttons
@@ -57,28 +57,28 @@ prices.forEach((price) => {
 })
 
 
-//create function that checks if radio button is checked and returns value of the radio button
+//create function that checks if radio button is checked or not and add checked or unchecked property to the radio button
 const checkRadio = () => {
     console.log(`checkRadio function starts...`)
+    //loop through all radio buttons with option property
+    let radios = document.querySelectorAll("input[option]");
+    radios.forEach((radio) => {
+        //if radio button is checked, add checked property to this radio button
+        if (radio.checked) {
+            radio.checked = true;
+            radio.value = "checked";
+        }
+        //if radio button is not checked, add unchecked property to this radio button
+        else {
+            radio.checked = false;
+            radio.value = "unchecked";
+        }
 
-//create variable that picks value from input type radio
-
-    for (const li of document.querySelectorAll('input[type="radio"]')) {
-        console.log(`Li content : ${li.textContent}`);
-    }
-    let radios
-
-    // for (let i = 0; i < radios.length; i++) {
-    //     if (radios[i].checked) {
-    //         console.log(`radio works:  ${radios[i].value}`)
-    //         return radios[i].value;
-    //     }
-    // }
+    })
 }
 
 //add event listener to check if any radio button is checked
 document.getElementById("infographic").addEventListener("click", checkRadio);
-
 
 
 
