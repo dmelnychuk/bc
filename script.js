@@ -80,11 +80,6 @@ const checkRadio = () => {
 //add event listener to check if any radio button is checked
 document.getElementById("infographic").addEventListener("click", checkRadio);
 
-
-
-
-
-
 // create function that picks up input id slidestorage position and store to the variable
 sliderStorage.oninput = function() {
     //create variable that indicates the position of the slider
@@ -111,38 +106,68 @@ const total = () => {
 const total = prices.map((price) => {
     
     let storagePrice = price.storage * sliderStoragePosition;
-    console.log(`storagePrice is ${storagePrice}`)
+    //console.log(`storagePrice is ${storagePrice}`)
     let transferePrice = price.transfere * sliderTransferePosition;
-    console.log(`transferePrice is ${transferePrice}`)
+    //console.log(`transferePrice is ${transferePrice}`)
     let totalPrice = storagePrice + transferePrice;
-    console.log(`totalPrice is ${totalPrice}`)
+    //console.log(`totalPrice is ${totalPrice}`)
     //if price has a minpay property and totalPrice is less than minpay, return minpay
     if (price.minpay && totalPrice < price.minpay) {
-        console.log("first if");
+        // console.log(price.name);
+        console.log(`${price.name}, total:${price.minpay} - (first if)`);
         return {name: price.name, total: price.minpay} }
     //if price has a maxpay property and totalPrice is more than maxpay, return maxpay
     else if (price.maxpay && totalPrice > price.maxpay) {
-        console.log("second if");
+        // console.log(price.name);
+        console.log(`${price.name}, total:${price.maxpay} - (second if)`);
         return {name: price.name, total: price.maxpay} }
 
- 
-
+    //if price has an options property, use checked radiobutton of relevant vendor to calculate price picked from storage with the same option key
+    else if (price.options) {
+        // console.log(price.name);
+        // console.log("third if");
+        let radios = document.querySelectorAll(`input[name="${price.name}"]`);
+        let ttlPrice = 0;
+        radios.forEach((radio) => {
+            if (radio.value === "checked") {
+                let option = radio.getAttribute("option");
+                // console.log(`Option if: 111 option is ${option}`)
+                let stPrice = price.storage[option] * sliderStoragePosition;
+                // console.log(`stPrice is ${stPrice}`)
+                let trnsPrice = price.transfere * sliderTransferePosition;
+                // console.log(`trtrnsPrice is ${trnsPrice}`)
+                ttlPrice = stPrice + trnsPrice;
+                // console.log(`ttlPrice is ${ttlPrice}`)
+                totalPrice = ttlPrice;
+                // return totalPrice;
+                
+            }
+            
+            console.log(`${price.name}, total: ${totalPrice} - (third if)`)
+            return {name: price.name, total: totalPrice}
+        })
+    }
 
     //if freegb property is less than sliderStoragePosition and sliderTransferePosition, return 0. 
  
     else if (price.freegb && price.freegb < sliderStoragePosition && price.freegb < sliderTransferePosition) {
-        console.log("third if");
+        // console.log(price.name);
+        console.log(`${price.name}, total: 0 - (forth if)`);
+
         return {name: price.name, total: 0} }
     //if freegb property is more than sliderStoragePosition or sliderTransferePosition, return totalPrice
     else if (price.freegb && price.freegb > sliderStoragePosition || price.freegb > sliderTransferePosition) {
-        console.log("forth if");
+        // console.log(price.name);
+        console.log(`${price.name}, total: ${totalPrice} - (fifth if)`);
         return {name: price.name, total: totalPrice} }
     //if none of the above conditions are met, return totalPrice
         else{
-        console.log("else");
+        // console.log("else");
+        // console.log(price.name);
+        console.log(`${price.name}, total: ${totalPrice} - (else)`);
         return {name: price.name, total: totalPrice}}
 
 })
 }
 
-/////need to fix an issue with NaN in function above
+
