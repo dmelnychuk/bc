@@ -31,6 +31,7 @@ const prices = [
       }
     ];
 
+
 // create variables that picks up ids of sliders from html body
 const sliderStorage = document.getElementById("sliderstorage");
 const sliderTransfere = document.getElementById("slidertransfere");
@@ -57,6 +58,8 @@ prices.forEach((price) => {
 })
 
 
+
+
 //create function that checks if radio button is checked or not and add checked or unchecked property to the radio button
 const checkRadio = () => {
     console.log(`checkRadio function starts...`)
@@ -75,9 +78,13 @@ const checkRadio = () => {
         }
 
     })
+    totalCost.length = 0;
+    optionCosts();
+    total();
 }
 
-//add event listener to check if any radio button is checked
+
+//event listener to check if any radio button is checked
 document.getElementById("infographic").addEventListener("click", checkRadio);
 
 // create function that picks up input id slidestorage position and store to the variable
@@ -87,6 +94,8 @@ sliderStorage.oninput = function() {
     console.log(`slider works:  ${sliderStoragePosition}`);
     //change value-storage id value to sliderStoragePosition
     document.getElementById("value-storage").innerHTML = sliderStoragePosition;
+    totalCost.length = 0;
+    optionCosts();
     total();
 }
 
@@ -97,63 +106,71 @@ sliderTransfere.oninput = function() {
     console.log(`slider works:  ${sliderTransferePosition}`);// testing output value
     //change value-transfere id value to sliderTransferePosition
     document.getElementById("value-transfere").innerHTML = sliderTransferePosition;
+    totalCost.length = 0;
+    optionCosts();
     total();
 }
 
 
-//loop through prizes array return a new array of objects with names and total price
-const total = () => {
-const total = prices.map((price) => {
-    
-    let storagePrice = price.storage * sliderStoragePosition;
-    //console.log(`storagePrice is ${storagePrice}`)
-    let transferePrice = price.transfere * sliderTransferePosition;
-    //console.log(`transferePrice is ${transferePrice}`)
-    let totalPrice = storagePrice + transferePrice;
-    //console.log(`totalPrice is ${totalPrice}`)
+//array to store vendors name and total cost
+let totalCost = [];
 
-//if price has an options property, use checked radiobutton of relevant vendor to calculate price picked from storage with the same option key
-     if (price.options) {
+//function to calculate total cost for vendors with options
+const optionCosts = () => {
+const optionCosts = prices.map((price) => {
+    if (price.options) {
         let radios = document.querySelectorAll(`input[name="${price.name}"]`);
-        let ttlPrice = 0;
         radios.forEach((radio) => {
             if (radio.value === "checked") {
+               
                 let option = radio.getAttribute("option");
-                // console.log(`Option if: 111 option is ${option}`)
-                let stPrice = price.storage[option] * sliderStoragePosition;
-                // console.log(`stPrice is ${stPrice}`)
-                let trnsPrice = price.transfere * sliderTransferePosition;
-                // console.log(`trtrnsPrice is ${trnsPrice}`)
-                ttlPrice = stPrice + trnsPrice;
-                // console.log(`ttlPrice is ${ttlPrice}`)
-                totalPrice = ttlPrice;
+                let stCost = price.storage[option];
+                totalCost.push({name: price.name, storageCost: stCost, transfereCost: price.transfere, minpay: price.minpay, maxpay: price.maxpay, freegb: price.freegb});
+               
             }
-            console.log(`${price.name}, total: ${totalPrice} - (first if)`)
-            return {name: price.name, total: totalPrice}
+            console.log(`${price.name}, object updated`)
+            
+            return {name: price.name}
         })
     }
+    else {totalCost.push({name: price.name, storageCost: price.storage, transfereCost: price.transfere, minpay: price.minpay, maxpay: price.maxpay, freegb: price.freegb})}
 
-    //if price has a minpay property and totalPrice is less than minpay, return minpay
-    else if (price.minpay && totalPrice < price.minpay) {
+})
+}
+
+
+//function to calculate total cost respective to discounts
+const total = () => {
+const total = totalCost.map((price) => {
+    
+    let storagePrice = price.storageCost * sliderStoragePosition;
+    let transferePrice = price.transfereCost * sliderTransferePosition;
+    let totalPrice = storagePrice + transferePrice;
+ 
+    //minpay condition
+
+    if (price.minpay && totalPrice < price.minpay) {
         console.log(`${price.name}, total:${price.minpay} - (second if)`);
         return {name: price.name, total: price.minpay} }
-    //if price has a maxpay property and totalPrice is more than maxpay, return maxpay
+    //maxpay condition
     else if (price.maxpay && totalPrice > price.maxpay) {
         console.log(`${price.name}, total:${price.maxpay} - (third if)`);
         return {name: price.name, total: price.maxpay} }
 
-    //if freegb property is less than sliderStoragePosition and sliderTransferePosition, return 0. 
+    //freegb condition
  
-    else if (price.freegb && price.freegb < sliderStoragePosition && price.freegb < sliderTransferePosition) {
+    else if (price.freegb && price.freegb > sliderStoragePosition && price.freegb > sliderTransferePosition) {
         console.log(`${price.name}, total: 0 - (forth if)`);
 
         return {name: price.name, total: 0} }
-    //if freegb property is more than sliderStoragePosition or sliderTransferePosition, return totalPrice
-    else if (price.freegb && price.freegb > sliderStoragePosition || price.freegb > sliderTransferePosition) {
-        // console.log(price.name);
+
+    else if (price.freegb && price.freegb < sliderStoragePosition) {
+
         console.log(`${price.name}, total: ${totalPrice} - (fifth if)`);
         return {name: price.name, total: totalPrice} }
-    //if none of the above conditions are met, return totalPrice
+
+
+    //no condition
         else{
         console.log(`${price.name}, total: ${totalPrice} - (else)`);
         return {name: price.name, total: totalPrice}}
