@@ -111,21 +111,9 @@ const total = prices.map((price) => {
     //console.log(`transferePrice is ${transferePrice}`)
     let totalPrice = storagePrice + transferePrice;
     //console.log(`totalPrice is ${totalPrice}`)
-    //if price has a minpay property and totalPrice is less than minpay, return minpay
-    if (price.minpay && totalPrice < price.minpay) {
-        // console.log(price.name);
-        console.log(`${price.name}, total:${price.minpay} - (first if)`);
-        return {name: price.name, total: price.minpay} }
-    //if price has a maxpay property and totalPrice is more than maxpay, return maxpay
-    else if (price.maxpay && totalPrice > price.maxpay) {
-        // console.log(price.name);
-        console.log(`${price.name}, total:${price.maxpay} - (second if)`);
-        return {name: price.name, total: price.maxpay} }
 
-    //if price has an options property, use checked radiobutton of relevant vendor to calculate price picked from storage with the same option key
-    else if (price.options) {
-        // console.log(price.name);
-        // console.log("third if");
+//if price has an options property, use checked radiobutton of relevant vendor to calculate price picked from storage with the same option key
+     if (price.options) {
         let radios = document.querySelectorAll(`input[name="${price.name}"]`);
         let ttlPrice = 0;
         radios.forEach((radio) => {
@@ -139,19 +127,24 @@ const total = prices.map((price) => {
                 ttlPrice = stPrice + trnsPrice;
                 // console.log(`ttlPrice is ${ttlPrice}`)
                 totalPrice = ttlPrice;
-                // return totalPrice;
-                
             }
-            
-            console.log(`${price.name}, total: ${totalPrice} - (third if)`)
+            console.log(`${price.name}, total: ${totalPrice} - (first if)`)
             return {name: price.name, total: totalPrice}
         })
     }
 
+    //if price has a minpay property and totalPrice is less than minpay, return minpay
+    else if (price.minpay && totalPrice < price.minpay) {
+        console.log(`${price.name}, total:${price.minpay} - (second if)`);
+        return {name: price.name, total: price.minpay} }
+    //if price has a maxpay property and totalPrice is more than maxpay, return maxpay
+    else if (price.maxpay && totalPrice > price.maxpay) {
+        console.log(`${price.name}, total:${price.maxpay} - (third if)`);
+        return {name: price.name, total: price.maxpay} }
+
     //if freegb property is less than sliderStoragePosition and sliderTransferePosition, return 0. 
  
     else if (price.freegb && price.freegb < sliderStoragePosition && price.freegb < sliderTransferePosition) {
-        // console.log(price.name);
         console.log(`${price.name}, total: 0 - (forth if)`);
 
         return {name: price.name, total: 0} }
@@ -162,11 +155,8 @@ const total = prices.map((price) => {
         return {name: price.name, total: totalPrice} }
     //if none of the above conditions are met, return totalPrice
         else{
-        // console.log("else");
-        // console.log(price.name);
         console.log(`${price.name}, total: ${totalPrice} - (else)`);
         return {name: price.name, total: totalPrice}}
-
 })
 }
 
