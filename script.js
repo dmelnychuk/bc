@@ -17,7 +17,6 @@ const prices = [
       },
        {
       name: "scaleway.com",
-      maxpay: 10,
       options: {multi: 0, single: 1},
       storage: {multi: 0.06, single: 0.03},
       transfere: 0.02,
@@ -36,8 +35,9 @@ const prices = [
 const sliderStorage = document.getElementById("sliderstorage");
 const sliderTransfere = document.getElementById("slidertransfere");
 //set base slider positions
-let sliderTransferePosition = 100; 
-let sliderStoragePosition = 100;
+
+
+
 
 //draw a list of vendors with and without radio buttons
 prices.forEach((price) => {
@@ -59,10 +59,16 @@ prices.forEach((price) => {
 
 
 
+//for each li with radio class set last child input to checked
+let radios = document.querySelectorAll("li.radio");
+radios.forEach((radio) => {
+    radio.lastChild.checked = true;
+})
+
+
 
 //create function that checks if radio button is checked or not and add checked or unchecked property to the radio button
 const checkRadio = () => {
-    console.log(`checkRadio function starts...`)
     //loop through all radio buttons with option property
     let radios = document.querySelectorAll("input[option]");
     radios.forEach((radio) => {
@@ -76,12 +82,10 @@ const checkRadio = () => {
             radio.checked = false;
             radio.value = "unchecked";
         }
-
     })
-    totalCost.length = 0;
-    optionCosts();
-    total();
+    run();
 }
+
 
 
 //event listener to check if any radio button is checked
@@ -89,26 +93,30 @@ document.getElementById("infographic").addEventListener("click", checkRadio);
 
 // create function that picks up input id slidestorage position and store to the variable
 sliderStorage.oninput = function() {
-    //create variable that indicates the position of the slider
-    sliderStoragePosition = sliderStorage.value;
-    console.log(`slider works:  ${sliderStoragePosition}`);
-    //change value-storage id value to sliderStoragePosition
-    document.getElementById("value-storage").innerHTML = sliderStoragePosition;
-    totalCost.length = 0;
-    optionCosts();
-    total();
+    document.getElementById("value-storage").value = sliderStorage.value;
+    run();
 }
+
+const  storageInput = document.getElementById("value-storage");
+storageInput.oninput = function() {
+    sliderStorage.value = storageInput.value;
+    sliderStoragePosition =  storageInput.value
+    console.log(`sliderStoragePosition:  ${sliderStoragePosition}`)
+    run();
+}
+
 
 // create function that picks up input id slidetransfere position and store to the variable
 sliderTransfere.oninput = function() {
-    //create variable that indicates the position of the slider
-    sliderTransferePosition = sliderTransfere.value;
-    console.log(`slider works:  ${sliderTransferePosition}`);// testing output value
-    //change value-transfere id value to sliderTransferePosition
-    document.getElementById("value-transfere").innerHTML = sliderTransferePosition;
-    totalCost.length = 0;
-    optionCosts();
-    total();
+    document.getElementById("value-transfere").value = sliderTransfere.value;
+    run();
+}
+
+const transferInput = document.getElementById("value-transfere");
+transferInput.oninput = function() {
+    sliderTransfere.value = transferInput.value;
+    sliderStoragePosition = transferInput.value;
+    run();
 }
 
 
@@ -138,43 +146,64 @@ const optionCosts = prices.map((price) => {
 })
 }
 
+let info = []
 
 //function to calculate total cost respective to discounts
 const total = () => {
+    info.length = 0;
 const total = totalCost.map((price) => {
     
-    let storagePrice = price.storageCost * sliderStoragePosition;
-    let transferePrice = price.transfereCost * sliderTransferePosition;
+    let storagePrice = price.storageCost * sliderStorage.value;
+    let transferePrice = price.transfereCost * sliderTransfere.value;
     let totalPrice = storagePrice + transferePrice;
  
     //minpay condition
 
     if (price.minpay && totalPrice < price.minpay) {
         console.log(`${price.name}, total:${price.minpay} - (second if)`);
+        info.push({name: price.name, total: price.minpay})
         return {name: price.name, total: price.minpay} }
     //maxpay condition
     else if (price.maxpay && totalPrice > price.maxpay) {
         console.log(`${price.name}, total:${price.maxpay} - (third if)`);
+        info.push({name: price.name, total: price.maxpay})
         return {name: price.name, total: price.maxpay} }
 
     //freegb condition
  
-    else if (price.freegb && price.freegb > sliderStoragePosition && price.freegb > sliderTransferePosition) {
+    else if (price.freegb && price.freegb > sliderStorage.value && price.freegb > sliderTransfere.value) {
         console.log(`${price.name}, total: 0 - (forth if)`);
-
+        info.push({name: price.name, total: 0})
         return {name: price.name, total: 0} }
 
-    else if (price.freegb && price.freegb < sliderStoragePosition) {
-
+    else if (price.freegb && price.freegb <= sliderStorage.value) {
+        totalPrice = totalPrice - (price.freegb * price.storageCost);
+        totalPrice = totalPrice - (price.freegb * price.transfereCost);
         console.log(`${price.name}, total: ${totalPrice} - (fifth if)`);
+        info.push({name: price.name, total: totalPrice})
         return {name: price.name, total: totalPrice} }
-
 
     //no condition
         else{
         console.log(`${price.name}, total: ${totalPrice} - (else)`);
+        info.push({name: price.name, total: totalPrice})
         return {name: price.name, total: totalPrice}}
 })
 }
 
+const run = () => {
+    totalCost.length = 0;
+    optionCosts();
+    total();
+    draw();
+}
 
+
+const draw = () => {
+    info.map((info) => {
+
+document.getElementById("chart").innerHTML += `<span class="pricing-graph-bar"></span>
+<span class="pricing-graph-tooltip" label=${info.name}> </span>
+<span class="pricing-graph-fill" style=${info.total}></span>`
+    })
+}
