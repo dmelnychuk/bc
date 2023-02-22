@@ -195,15 +195,69 @@ const run = () => {
     totalCost.length = 0;
     optionCosts();
     total();
+    infoDataUpdate();
     draw();
 }
 
 
-const draw = () => {
-    info.map((info) => {
+let labels = [];
+let values = [];
 
-document.getElementById("chart").innerHTML += `<span class="pricing-graph-bar"></span>
-<span class="pricing-graph-tooltip" label=${info.name}> </span>
-<span class="pricing-graph-fill" style=${info.total}></span>`
-    })
+const infoDataUpdate = () => {
+    labels.length = 0;
+    values.length = 0;
+const labelsData = info.map ((name) => {
+    labels.push(name.name);
+    return name.name;
+})
+
+const valuesData = info.map ((total) => {
+    values.push(total.total);
+    return total.total;
+})
+
+console.table(labels);
+console.table(values);
+}
+
+//setup block
+const data = {
+    labels: labels,
+    datasets: [{
+      label: '# of Votes',
+      data: values,
+      borderWidth: 1
+    }]
+  }
+//config block
+const config = {
+    type: 'bar',
+    data,
+    options: {
+        indexAxis: 'x',
+        animation : { duration: 0 },
+        scales: {
+            x: {
+                beginAtZero: true
+            }
+        }
+    }
+};
+
+//init block
+let ctx = document.getElementById('myChart');
+let myChart = new Chart(ctx, config);
+
+const draw = () => {
+//destroy existing chart before rendering new one
+const destroy = () => {
+    myChart.destroy();
+}
+destroy();
+
+//render new chart
+const render = () => {
+    myChart = new Chart(ctx, config);
+}
+render();
 }
