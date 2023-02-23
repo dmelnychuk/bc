@@ -1,21 +1,20 @@
 body {
   background: #ffffff;
+  color: #050000;
+  margin: 20px;
+  padding: 20px;
+
   }
 
 h1, h2, p, a, span {
     color: #050000;
   }
 
-  #infographic {
-    width: 100%;
-    background: #fff;
+
+#myChart {
+  box-sizing: border-box;
+  display: block;
+  max-width: 600px;
+  max-height: 350px;
   }
 
-
-.chartBox {
-  width: 90%;
-  padding: 20px;
-  border-radius: 20px;
-  border: solid 3px rgba(255, 26, 104, 1);
-  background: #fff;
-  }

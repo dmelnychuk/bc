@@ -120,19 +120,19 @@ const total = totalCost.map((price) => {
  
     //minpay condition
     if (price.minpay && totalPrice < price.minpay) {
-        console.log(`${price.name}, total:${price.minpay} - (second if)`);
+        // console.log(`${price.name}, total:${price.minpay} - (second if)`);
         info.push({name: price.name, total: price.minpay})
         return {name: price.name, total: price.minpay} }
     //maxpay condition
     else if (price.maxpay && totalPrice > price.maxpay) {
-        console.log(`${price.name}, total:${price.maxpay} - (third if)`);
+        // console.log(`${price.name}, total:${price.maxpay} - (third if)`);
         info.push({name: price.name, total: price.maxpay})
         return {name: price.name, total: price.maxpay} }
 
     //freegb condition
  
     else if (price.freegb && price.freegb > sliderStorage.value && price.freegb > sliderTransfere.value) {
-        console.log(`${price.name}, total: 0 - (forth if)`);
+        // console.log(`${price.name}, total: 0 - (forth if)`);
         info.push({name: price.name, total: 0})
         return {name: price.name, total: 0} }
 
@@ -140,13 +140,13 @@ const total = totalCost.map((price) => {
         totalPrice = totalPrice - (price.freegb * price.storageCost);
         totalPrice = totalPrice - (price.freegb * price.transfereCost);
         totalPrice = totalPrice.toFixed(2);
-        console.log(`${price.name}, total: ${totalPrice} - (fifth if)`);
+        // console.log(`${price.name}, total: ${totalPrice} - (fifth if)`);
         info.push({name: price.name, total: totalPrice})
         return {name: price.name, total: totalPrice} }
 
     //no condition
         else{
-        console.log(`${price.name}, total: ${totalPrice} - (else)`);
+        // console.log(`${price.name}, total: ${totalPrice} - (else)`);
         info.push({name: price.name, total: totalPrice})
         return {name: price.name, total: totalPrice}}
 })
@@ -218,11 +218,21 @@ const config = {
     options: {
         indexAxis: 'x',
         animation : { duration: 0 },
+        // maintainAspectRatio: false,
+    aspectRatio:  1 / 1,
         scales: {
             y: {
                 //ticks: { color: bgcolor },
                 beginAtZero: true
             }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    boxWidth: 0
+                }
+            }
+            
         }
     },
     plugins: [ChartDataLabels]
@@ -234,11 +244,19 @@ const config2 = {
     options: {
         indexAxis: 'y',
         animation : { duration: 0 },
+      aspectRatio: 1 / 1,
         scales: {
             x: {
-                //ticks: { color: bgcolor },
                 beginAtZero: true
             }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    boxWidth: 0
+                }
+            }
+            
         }
     },
     plugins: [ChartDataLabels]
@@ -266,10 +284,10 @@ render();
 window.addEventListener("resize", () => {
     draw();
     let indexAxis = myChart.config.options.indexAxis;
-    console.log(indexAxis);
+    // console.log(indexAxis);
 
     if (indexAxis == 'x' && window.innerWidth >= 600) {
-        console.log('convert to Y')
+        // console.log('convert to Y')
         myChart.destroy();
 
         myChart = new Chart(
