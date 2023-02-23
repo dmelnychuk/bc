@@ -1,14 +1,21 @@
 body {
-  background: #1f253d;
+  background: #ffffff;
   }
 
-h1, h2, p, a, span{
-    color: #fff;
+h1, h2, p, a, span {
+    color: #050000;
   }
 
   #infographic {
     width: 100%;
-    background: grey;
+    background: #fff;
   }
 
 
+.chartBox {
+  width: 90%;
+  padding: 20px;
+  border-radius: 20px;
+  border: solid 3px rgba(255, 26, 104, 1);
+  background: #fff;
+  }

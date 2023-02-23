@@ -1,41 +1,8 @@
-//const prices = require("./prices.js"); //access prices.js file where we have all prices and conditions
-console.log("test");
+import {prices} from "./prices.js"; 
 
-const prices = [
-    {
-      name: "backblaze.com",
-      storage: 0.005,
-      transfere: 0.01,
-      minpay: 7,
-     },
-     {
-      name: "bunny.net",
-      options: {hdd: 0, ssd: 1},
-      storage: {ssd: 0.02, hdd: 0.01},
-      transfere: 0.01,
-      maxpay: 10,
-      },
-       {
-      name: "scaleway.com",
-      options: {multi: 0, single: 1},
-      storage: {multi: 0.06, single: 0.03},
-      transfere: 0.02,
-      freegb: 75,
-      },
-     {
-      name: "vultr.com",
-      minpay: 5,
-      storage: 0.01,
-      transfere: 0.01,
-      }
-    ];
-
-
-// create variables that picks up ids of sliders from html body
+// variables for ids of sliders from html body
 const sliderStorage = document.getElementById("sliderstorage");
 const sliderTransfere = document.getElementById("slidertransfere");
-//set base slider positions
-
 
 
 
@@ -58,7 +25,6 @@ prices.forEach((price) => {
 })
 
 
-
 //for each li with radio class set last child input to checked
 let radios = document.querySelectorAll("li.radio");
 radios.forEach((radio) => {
@@ -66,18 +32,14 @@ radios.forEach((radio) => {
 })
 
 
-
-//create function that checks if radio button is checked or not and add checked or unchecked property to the radio button
+//check if radio button is checked or not 
 const checkRadio = () => {
-    //loop through all radio buttons with option property
     let radios = document.querySelectorAll("input[option]");
     radios.forEach((radio) => {
-        //if radio button is checked, add checked property to this radio button
         if (radio.checked) {
             radio.checked = true;
             radio.value = "checked";
         }
-        //if radio button is not checked, add unchecked property to this radio button
         else {
             radio.checked = false;
             radio.value = "unchecked";
@@ -100,8 +62,6 @@ sliderStorage.oninput = function() {
 const  storageInput = document.getElementById("value-storage");
 storageInput.oninput = function() {
     sliderStorage.value = storageInput.value;
-    sliderStoragePosition =  storageInput.value
-    console.log(`sliderStoragePosition:  ${sliderStoragePosition}`)
     run();
 }
 
@@ -115,7 +75,7 @@ sliderTransfere.oninput = function() {
 const transferInput = document.getElementById("value-transfere");
 transferInput.oninput = function() {
     sliderTransfere.value = transferInput.value;
-    sliderStoragePosition = transferInput.value;
+    sliderStorage.value = transferInput.value;
     run();
 }
 
@@ -136,7 +96,7 @@ const optionCosts = prices.map((price) => {
                 totalCost.push({name: price.name, storageCost: stCost, transfereCost: price.transfere, minpay: price.minpay, maxpay: price.maxpay, freegb: price.freegb});
                
             }
-            console.log(`${price.name}, object updated`)
+            //console.log(`${price.name}, object updated`)
             
             return {name: price.name}
         })
@@ -156,9 +116,9 @@ const total = totalCost.map((price) => {
     let storagePrice = price.storageCost * sliderStorage.value;
     let transferePrice = price.transfereCost * sliderTransfere.value;
     let totalPrice = storagePrice + transferePrice;
+    totalPrice = totalPrice.toFixed(2);
  
     //minpay condition
-
     if (price.minpay && totalPrice < price.minpay) {
         console.log(`${price.name}, total:${price.minpay} - (second if)`);
         info.push({name: price.name, total: price.minpay})
@@ -179,6 +139,7 @@ const total = totalCost.map((price) => {
     else if (price.freegb && price.freegb <= sliderStorage.value) {
         totalPrice = totalPrice - (price.freegb * price.storageCost);
         totalPrice = totalPrice - (price.freegb * price.transfereCost);
+        totalPrice = totalPrice.toFixed(2);
         console.log(`${price.name}, total: ${totalPrice} - (fifth if)`);
         info.push({name: price.name, total: totalPrice})
         return {name: price.name, total: totalPrice} }
@@ -196,13 +157,29 @@ const run = () => {
     optionCosts();
     total();
     infoDataUpdate();
+    color();
     draw();
 }
 
 
 let labels = [];
 let values = [];
+let bgcolor = [];
 
+//assigncolor to the lowest value
+const color = () => {
+    bgcolor.length = 0;
+    values.forEach((value) => {
+        if (value === Math.min(...values)) {
+            bgcolor.push("aquamarine");
+        }
+        else {
+            bgcolor.push("lavender");
+        }
+    })
+}
+
+//update labels and values arrays
 const infoDataUpdate = () => {
     labels.length = 0;
     values.length = 0;
@@ -212,21 +189,26 @@ const labelsData = info.map ((name) => {
 })
 
 const valuesData = info.map ((total) => {
-    values.push(total.total);
+    let totalValue = total.total;
+    totalValue = parseFloat(totalValue);
+    values.push(totalValue);
     return total.total;
 })
 
-console.table(labels);
-console.table(values);
+// console.table(labels);
+// console.table(values);
+// console.table(bgcolor);
 }
 
 //setup block
 const data = {
     labels: labels,
     datasets: [{
-      label: '# of Votes',
+      label: 'Total price',
       data: values,
-      borderWidth: 1
+      borderWidth: 1,
+      backgroundColor: bgcolor,
+    //   borderColor: ["#FF6384"]
     }]
   }
 //config block
@@ -237,11 +219,29 @@ const config = {
         indexAxis: 'x',
         animation : { duration: 0 },
         scales: {
-            x: {
+            y: {
+                //ticks: { color: bgcolor },
                 beginAtZero: true
             }
         }
-    }
+    },
+    plugins: [ChartDataLabels]
+}
+
+const config2 = {
+    type: 'bar',
+    data,
+    options: {
+        indexAxis: 'y',
+        animation : { duration: 0 },
+        scales: {
+            x: {
+                //ticks: { color: bgcolor },
+                beginAtZero: true
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
 };
 
 //init block
@@ -260,4 +260,35 @@ const render = () => {
     myChart = new Chart(ctx, config);
 }
 render();
-}
+};
+
+//change config for myChart on resize the screen
+window.addEventListener("resize", () => {
+    draw();
+    let indexAxis = myChart.config.options.indexAxis;
+    console.log(indexAxis);
+
+    if (indexAxis == 'x' && window.innerWidth >= 600) {
+        console.log('convert to Y')
+        myChart.destroy();
+
+        myChart = new Chart(
+            ctx,
+            config2
+            
+        );
+    }
+    if (indexAxis == 'y' && window.innerWidth < 600) {
+        //console.log('convert to X')
+        myChart.destroy();
+
+        myChart = new Chart(
+            ctx,
+            config
+        );
+    }
+
+})
+
+run();
+
